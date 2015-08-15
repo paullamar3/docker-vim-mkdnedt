@@ -1,20 +1,28 @@
 
-## Dockerfile for creating Journal documents
-FROM paullamar3/vim-7.4:v0.2
+## Dockerfile for creating Markdown documents
+FROM paullamar3/vim-7.4:v0.7
 MAINTAINER Paul LaMar
 
 # Add lines for the tabular, vim-markdown and fugitive plugins
-RUN sed -i "s/call plug#end()/Plug 'godlygeek\/tabular'\nPlug 'plasticboy\/vim-markdown'\nPlug 'tpope\/vim-fugitive'\n&/" /home/vim/.vimrc 
+RUN sed -i "s/call plug#end()/Plug 'godlygeek\/tabular'\nPlug 'plasticboy\/vim-markdown'\nPlug 'tpope\/vim-fugitive'\n&/" /home/vim/.vimrc
+
+# Add command to treat '.page' files as markdown.
 RUN printf "%b" "\n\" Treat gitit's .page files as markdown\n" >> /home/vim/.vimrc && \
     printf "%b" "autocmd BufNewFile,BufRead *.page  set filetype=markdown\n" >> /home/vim/.vimrc
 
+COPY entrypoint.sh /home/vim/
+
+# Put us in the vim home folder
 WORKDIR /home/vim/
 
-RUN mkdir journal && chown vim journal
+# Make the 'mkdn' folder
+RUN mkdir mkdn
+RUN chown vim mkdn
 
+# Switch to vim user
 USER vim
 
+# Install the new vim plugins.
 RUN vim -c "PlugInstall|q|q"
 
-## CMD /bin/bash
-ENTRYPOINT ["vim"]
+ENTRYPOINT ["/home/vim/entrypoint.sh"]
