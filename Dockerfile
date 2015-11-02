@@ -1,4 +1,3 @@
-
 ## Dockerfile for creating Markdown documents
 FROM paullamar3/vim-7.4:v0.7
 MAINTAINER Paul LaMar
