@@ -1,13 +1,16 @@
 ## Dockerfile for creating Markdown documents
-FROM paullamar3/vim-7.4:v0.7
-MAINTAINER Paul LaMar
+FROM paullamar3/docker-vim:v0.1
+MAINTAINER Paul LaMar <pal3@outlook.com>
 
-# Add lines for the tabular, vim-markdown and fugitive plugins
-RUN sed -i "s/call plug#end()/Plug 'godlygeek\/tabular'\nPlug 'plasticboy\/vim-markdown'\nPlug 'tpope\/vim-fugitive'\n&/" /home/vim/.vimrc
+# Add lines for the tabular, vim-markdown plugins
+RUN sed -i "s/call plug#end()/Plug 'godlygeek\/tabular'\nPlug 'plasticboy\/vim-markdown'\n&/" /home/vim/.vimrc
 
 # Add command to treat '.page' files as markdown.
 RUN printf "%b" "\n\" Treat gitit's .page files as markdown\n" >> /home/vim/.vimrc && \
-    printf "%b" "autocmd BufNewFile,BufRead *.page  set filetype=markdown\n" >> /home/vim/.vimrc
+    printf "%b" "autocmd BufNewFile,BufRead *.page  set filetype=markdown\n" >> /home/vim/.vimrc && \
+    printf "%b" "\" Some markdown specific settings\n" >> /home/vim/.vimrc && \
+    printf "%b" "set nowrap \nset spell \nset textwidth=79 \n" >> /home/vim/.vimrc && \
+    printf "%b" "highlight SpellBad ctermbg=5 \n" >> /home/vim/.vimrc 
 
 COPY entrypoint.sh /home/vim/
 
